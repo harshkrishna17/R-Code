@@ -12,6 +12,7 @@ library(ggtext)
 library(worldfootballR)
 library(plotly)
 library(dplyr)
+library(ggalt)
 
 #extracting data
 

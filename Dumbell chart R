@@ -1,0 +1,51 @@
+#installing and loading required packages
+
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("ggtext")
+install.packages("devtools")
+remotes::install_github("JaseZiv/worldfootballR")
+
+library(tidyverse)
+library(ggplot2)
+library(ggtext)
+library(worldfootballR)
+library(plotly)
+library(dplyr)
+
+#extracting data
+
+league_table <- get_season_team_stats(country = "ENG", gender = "M", season_end_year = "2020", tier = "1st", stat_type = "league_table_home_away")
+data1 <- league_table[, c(5, 17, 30)]
+
+data1$Squad <- factor(data1$Squad, levels=as.character(data1$Squad))
+
+#creating a plain chart
+
+data1$Squad <- factor(data1$Squad, levels=as.character(data1$Squad))
+ggplot(data1, aes(x=xG_Home, xend=xG_Away, y=Squad)) + 
+  geom_dumbbell()
+
+#beautification
+
+ggplot(data1, aes(x=xG_Home, xend=xG_Away, y=Squad)) +
+   geom_segment(aes(x=xG_Home, 
+                   xend=xG_Away, 
+                   y=Squad, 
+                   yend=Squad), 
+               color="#b2b2b2", size=1.5)+
+  geom_dumbbell(color="light blue", 
+                size_x=10, 
+                size_xend =10,
+                colour_x="#238b45", 
+                colour_xend = "#2171b5")+
+  labs(x=NULL, y=NULL, 
+       title="Premier League xG Performance (2020/21)", 
+       subtitle="How have Premier League teams performed on xG <b style='color:#238b45'>Home</b> and
+                          <b style='color:#2171b5'>Away</b> ?") +
+  theme_classic(base_size = 24) +
+  theme(plot.title = element_markdown(lineheight = 1.1),
+        plot.subtitle = element_markdown(lineheight = 1.1)) +
+  labs(fill="",                                                                       
+       caption = "Data from FBref via worldfootballR
+       Created by Harsh Krishna")

@@ -20,10 +20,10 @@ data$result[data$result == "ShotOnPost"] <- 0
 data$result[data$result == "OwnGoal"] <- 0
 
 data <- data %>%
-  mutate(goals = as.numeric(result)) %>%
-  mutate(GxG = goals - xG) %>%
-  mutate(GxGSM = TTR::SMA(GxG, n = 50)) %>%
-  mutate(no = 1:nrow(data))
+  mutate(goals = as.numeric(result),
+         GxG = goals - xG,
+         GxGSM = TTR::SMA(GxG, n = 50),
+         no = 1:nrow(data))
 
 # Plotting
 

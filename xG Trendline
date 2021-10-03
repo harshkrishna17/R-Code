@@ -54,14 +54,14 @@ dfa <- dfa %>%
 
 data <- cbind(df, dfa)
 data <- data %>%
-  rename(xG = 'sum(xG)')
-data$xGSUM <- (data$xG + data$xGA) / 2
+  rename(xG = 'sum(xG)') %>%
+  mutate(xGSUM = (xG + xGA)/2)
 data <- data[order(as.Date(data$date),decreasing = FALSE),]
-data$Round <- 1:nrow(data)
-
-data$xGSM <- TTR::SMA(data$xG, n = 15)
-data$xGASM <- TTR::SMA(data$xGA, n = 15)
-data$xGSUM <- TTR::SMA(data$xGSUM, n = 15)
+data <- data %>%
+  mutate(Round = 1:nrow(data),
+         xGSM = TTR::SMA(xG, n = 15),
+         xGASM = TTR::SMA(xGA, n = 15),
+         xGSUM = TTR::SMA(xGSUM, n = 15))
 
 # FBref (via StatsBomb)
 
@@ -104,25 +104,25 @@ dfa <- rbind(df3, df4)
 dfa <- dfa[, 3]
 data <- cbind(df, dfa)
 data <- data %>%
-  rename(xGA = dfa)
+  rename(xGA = dfa) %>%
+  mutate(xGSUM = (xG + xGA)/2)
 
-data$xGSUM <- (data$xG + data$xGA) / 2
 data <- data[order(as.Date(data$Date),decreasing = FALSE),]
-data$Round <- 1:nrow(data)
-
-data$xGSM <- TTR::SMA(data$xG, n = 10)
-data$xGASM <- TTR::SMA(data$xGA, n = 10)
-data$xGSUM <- TTR::SMA(data$xGSUM, n = 10)
+data <- data %>%
+  mutate(Round = 1:nrow(data),
+         xGSM = TTR::SMA(xG, n = 10),
+         xGASM = TTR::SMA(xGA, n = 10),
+         xGSUM = TTR::SMA(xGSUM, n = 10))
 
 # Plotting
 
 attach(data)
 
 fig <- ggplot(data , aes(x = Round)) +
-geom_line(aes(y = xGSM), colour = "#54278f", size = 3) +
-geom_line(aes(y = xGASM), colour = "#fec44f", size = 3) +
-geom_line(aes(y = xGSUM), colour = "#000000", size = 0.1) +  
-geom_point(aes(y = xGSM), colour = "#54278f", size = 3) +
+  geom_line(aes(y = xGSM), colour = "#54278f", size = 3) +
+  geom_line(aes(y = xGASM), colour = "#fec44f", size = 3) +
+  geom_line(aes(y = xGSUM), colour = "#000000", size = 0.1) +  
+  geom_point(aes(y = xGSM), colour = "#54278f", size = 3) +
   geom_point(aes(y = xGASM), colour = "#fec44f", size = 3) +
   expand_limits(y = c(0.25, 2.25)) + xlim(15, 269) +
   stat_smooth(method = 'lm', aes(y = xGSM), color = "#54278f", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
@@ -134,8 +134,8 @@ geom_point(aes(y = xGSM), colour = "#54278f", size = 3) +
   theme_classic(base_size = 24) +
   theme(plot.title = element_markdown(lineheight = 1.1),
         plot.subtitle = element_markdown(lineheight = 1.1)) +
-labs(fill="",                                                                       
-            caption = "Data from Understat
+  labs(fill="",                                                                       
+       caption = "Data from Understat
        Created by Harsh Krishna") +
   theme(plot.background = element_rect(fill = "#000000", colour = "#000000")) +
   theme(panel.background = element_rect(fill = "#000000", colour = "#000000")) +
@@ -145,15 +145,15 @@ labs(fill="",
   theme(axis.title.y = element_text(colour = "#ffffff")) +
   theme(axis.text.x = element_text(colour = "#ffffff"),
         axis.text.y = element_text(colour = "#ffffff")) +
-theme(panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank()) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(0, 50, 100, 150, 200, 250, 300)) +
   theme(panel.grid.major.y = element_blank()) + 
   theme(axis.line = element_line(size = 0.8, colour = "#ffffff"))
 fig
 
 fig <- fig + geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#fec44f", alpha = 0.4) +
-             geom_ribbon(aes(ymin=xGSUM, ymax=xGSM, x=Round), fill = "#54278f", alpha = 0.4) +
+  geom_ribbon(aes(ymin=xGSUM, ymax=xGSM, x=Round), fill = "#54278f", alpha = 0.4) +
   stat_smooth(method = 'lm', aes(y = xGSM), color = "#54278f", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
   stat_smooth(method = 'lm', aes(y = xGA), color = "#fec44f", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
   theme(legend.position = "none") +
@@ -165,6 +165,3 @@ fig <- fig + geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#fec44f",
   geom_vline(xintercept = 225, linetype = "solid", colour = "#ffffff", size = 2) +
   geom_vline(xintercept = 263, linetype = "solid", colour = "#ffffff", size = 2)
 fig
-
-This would lead to a line chart with annotations for each league season. Further modifications (text, season name) can be added using an image editing software such as PPT or
-Canva.

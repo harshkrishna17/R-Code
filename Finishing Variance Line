@@ -35,7 +35,7 @@ ggplot(data, aes(x = no, y = GxGSM, colour = GxGSM)) +
   theme(legend.position="none") +
   labs(x=NULL, y=NULL, 
        title="<b style='color:#ffffff'>Jamie Vardy Finishing Variance</b>",
-       subtitle="<b style='color:#ffffff'>50 Shot Rolling Average (Open play shots only)</b>") +
+       subtitle="<b style='color:#ffffff'>50 Shot Rolling Average (Non-Penalty shots)</b>") +
   theme_classic(base_size = 24) +
   theme(plot.title = element_markdown(lineheight = 1.1),
         plot.subtitle = element_markdown(lineheight = 1.1)) +

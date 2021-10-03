@@ -14,37 +14,37 @@ library(worldfootballR)
 
 # Understat
 
-data1 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2014")
-data2 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2015")
-data3 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2016")
-data4 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2017")
-data5 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2018")
-data6 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2019")
-data7 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2020")
-data8 <- understat_team_season_shots(team_url = "https://understat.com/team/Real_Madrid/2021")
+data1 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2014")
+data2 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2015")
+data3 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2016")
+data4 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2017")
+data5 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2018")
+data6 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2019")
+data7 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2020")
+data8 <- understat_team_season_shots(team_url = "https://understat.com/team/Manchester_United/2021")
 
 data <- rbind(data1, data2, data3, data4, data5, data6, data7, data8)
 
 df1 <- data %>%
   filter(home_away == "h") %>%
-  filter(home_team == "Real Madrid") %>%
+  filter(home_team == "Manchester United") %>%
   group_by(date) %>%
   summarise(sum(xG))
 df2 <- data %>%
   filter(home_away == "a") %>%
-  filter(away_team == "Real Madrid") %>%
+  filter(away_team == "Manchester United") %>%
   group_by(date) %>%
   summarise(sum(xG))
 df <- rbind(df1, df2)
 
 df3 <- data %>%
   filter(home_away == "a") %>%
-  filter(home_team == "Real Madrid") %>%
+  filter(home_team == "Manchester United") %>%
   group_by(date) %>%
   summarise(sum(xG))
 df4 <- data %>%
   filter(home_away == "h") %>%
-  filter(away_team == "Real Madrid") %>%
+  filter(away_team == "Manchester United") %>%
   group_by(date) %>%
   summarise(sum(xG))
 dfa <- rbind(df3, df4)
@@ -65,23 +65,23 @@ data <- data %>%
 
 # FBref (via StatsBomb)
 
-dat1 <- get_match_results(country = "ESP", gender = "M", season_end_year = 2018, tier = "1st")
-dat2 <- get_match_results(country = "ESP", gender = "M", season_end_year = 2019, tier = "1st")
-dat3 <- get_match_results(country = "ESP", gender = "M", season_end_year = 2020, tier = "1st")
-dat4 <- get_match_results(country = "ESP", gender = "M", season_end_year = 2021, tier = "1st")
-dat5 <- get_match_results(country = "ESP", gender = "M", season_end_year = 2022, tier = "1st")
+dat1 <- get_match_results(country = "ENG", gender = "M", season_end_year = 2018, tier = "1st")
+dat2 <- get_match_results(country = "ENG", gender = "M", season_end_year = 2019, tier = "1st")
+dat3 <- get_match_results(country = "ENG", gender = "M", season_end_year = 2020, tier = "1st")
+dat4 <- get_match_results(country = "ENG", gender = "M", season_end_year = 2021, tier = "1st")
+dat5 <- get_match_results(country = "ENG", gender = "M", season_end_year = 2022, tier = "1st")
 
 dat5 <- dat5[c(1:65), ]
 data <- rbind(dat1, dat2, dat3, dat4, dat5)
 
 df1 <- data %>%
-  filter(Home == "Real Madrid")
+  filter(Home == "Manchester Utd")
 df1 <- df1[, c("Date","Home", "Home_xG")]
 df1 <- df1 %>%
   rename(xG = Home_xG) %>%
   rename(Team = Home)
 df2 <- data %>%
-  filter(Away == "Real Madrid")
+  filter(Away == "Manchester Utd")
 df2 <- df2[, c("Date","Away", "Away_xG")]
 df2 <- df2 %>%
   rename(xG = Away_xG) %>%
@@ -89,13 +89,13 @@ df2 <- df2 %>%
 df <- rbind(df1, df2)
 
 df3 <- data %>%
-  filter(Home == "Real Madrid")
+  filter(Home == "Manchester Utd")
 df3 <- df3[, c("Date","Away", "Away_xG")]
 df3 <- df3 %>%
   rename(xGA = Away_xG) %>%
   rename(Team = Away)
 df4 <- data %>%
-  filter(Away == "Real Madrid")
+  filter(Away == "Manchester Utd")
 df4 <- df4[, c("Date","Home", "Home_xG")]
 df4 <- df4 %>%
   rename(xGA = Home_xG) %>%
@@ -119,18 +119,18 @@ data <- data %>%
 attach(data)
 
 fig <- ggplot(data , aes(x = Round)) +
-  geom_line(aes(y = xGSM), colour = "#54278f", size = 3) +
-  geom_line(aes(y = xGASM), colour = "#fec44f", size = 3) +
+  geom_line(aes(y = xGSM), colour = "#238443", size = 3) +
+  geom_line(aes(y = xGASM), colour = "#cb181d", size = 3) +
   geom_line(aes(y = xGSUM), colour = "#000000", size = 0.1) +  
-  geom_point(aes(y = xGSM), colour = "#54278f", size = 3) +
-  geom_point(aes(y = xGASM), colour = "#fec44f", size = 3) +
+  geom_point(aes(y = xGSM), colour = "#238443", size = 3) +
+  geom_point(aes(y = xGASM), colour = "#cb181d", size = 3) +
   expand_limits(y = c(0.25, 2.25)) + xlim(15, 269) +
-  stat_smooth(method = 'lm', aes(y = xGSM), color = "#54278f", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
-  stat_smooth(method = 'lm', aes(y = xGA), color = "#fec44f", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
+  stat_smooth(method = 'lm', aes(y = xGSM), color = "#238443", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
+  stat_smooth(method = 'lm', aes(y = xGA), color = "#cb181d", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
   labs(x=NULL, y=NULL, 
-       title="<b style='color:#ffffff'>Real Madrid xG Trendline (2014-) </b>", 
-       subtitle="<b style='color:#ffffff'>15 game rolling average.</b> <b style='color:#54278f'>xG</b> <b style='color:#ffffff'>|</b> 
-<b style='color:#fec44f'>xGA</b>") +
+       title="<b style='color:#ffffff'>Manchester United xG Trendline (2014-) </b>", 
+       subtitle="<b style='color:#ffffff'>15 game rolling average.</b> <b style='color:#238443'>xG</b> <b style='color:#ffffff'>|</b> 
+<b style='color:#cb181d'>xGA</b>") +
   theme_classic(base_size = 24) +
   theme(plot.title = element_markdown(lineheight = 1.1),
         plot.subtitle = element_markdown(lineheight = 1.1)) +
@@ -152,10 +152,10 @@ fig <- ggplot(data , aes(x = Round)) +
   theme(axis.line = element_line(size = 0.8, colour = "#ffffff"))
 fig
 
-fig <- fig + geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#fec44f", alpha = 0.4) +
-  geom_ribbon(aes(ymin=xGSUM, ymax=xGSM, x=Round), fill = "#54278f", alpha = 0.4) +
-  stat_smooth(method = 'lm', aes(y = xGSM), color = "#54278f", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
-  stat_smooth(method = 'lm', aes(y = xGA), color = "#fec44f", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
+fig <- fig + geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#cb181d", alpha = 0.4) +
+  geom_ribbon(aes(ymin=xGSUM, ymax=xGSM, x=Round), fill = "#238443", alpha = 0.4) +
+  stat_smooth(method = 'lm', aes(y = xGSM), color = "#238443", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
+  stat_smooth(method = 'lm', aes(y = xGA), color = "#cb181d", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
   theme(legend.position = "none") +
   geom_vline(xintercept = 36, linetype = "solid", colour = "#ffffff", size = 2) +
   geom_vline(xintercept = 74, linetype = "solid", colour = "#ffffff", size = 2) +

@@ -1,0 +1,42 @@
+plot_dumbbell <- function(data = data1, x = xGDiff_Home, xend = xGDiff_Away, y = Squad, size_x, size_xend, colour_x, colour_xend, title, subtitle, titlecol, titlesize, subcol, subsize, caption, xtitle){ggplot(data1, aes(x=xGDiff_Home, xend=xGDiff_Away, y=Squad, colour = )) + 
+  geom_segment(aes(x=xGDiff_Home, 
+                       xend=xGDiff_Away, 
+                       y=Squad, 
+                       yend=Squad), 
+                   color="#b2b2b2", size=3) + 
+  geom_dumbbell(color="light blue",         
+                    size_x= size_x,                  
+                    size_xend = size_xend,            
+                    colour_x= colour_x,       
+                    colour_xend = colour_xend) +
+  labs(x=NULL, y=NULL, 
+           title= title, 
+           subtitle= subtitle) + 
+  theme(plot.title = element_text(colour = titlecol, size = titlesize),
+        plot.subtitle = element_text(colour = subcol, size = subsize)) +
+  labs(fill="",                                                                       
+            caption = caption) +
+  theme(plot.background = element_rect(fill = "#000000", colour = "#000000")) +
+  theme(panel.background = element_rect(fill = "#000000", colour = "#000000")) +
+  theme(plot.caption = element_text(color = "white")) +
+  labs(x = xtitle) +
+  theme(axis.title.x = element_text(colour = "#ffffff")) +
+  theme(axis.text.x = element_text(colour = "#ffffff"),
+        axis.text.y = element_text(colour = "#ffffff")) +
+  theme(panel.grid.major = element_line(colour="grey", size = (0.1)),
+                 panel.grid.minor = element_blank()) +
+  theme(panel.grid.major.y = element_blank()) + 
+  theme(axis.line = element_line(size = 0.8, colour = "#ffffff")) +
+    theme(legend.justification = "bottom",
+          legend.title = element_text(colour = "white"))
+}
+
+# Bringing it all together
+
+plot_dumbbell(data = data1, x = xGDiff_Home, y = xGDiff_Away, 
+              colour_x = "red", colour_xend = "blue", 
+              size_x = 10, size_xend = 10,
+              title = "hi", subtitle = "yo",
+              titlecol = "white", titlesize = 20,
+              subcol = "white", subsize = 15,
+              caption = "why", xtitle = "hahah")

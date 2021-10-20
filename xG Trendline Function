@@ -27,6 +27,7 @@ plot_trendline <- function(data, team, colour_xg, colour_xga, roll_avg, theme = 
   colour_b = ""
   colorLine = ""
   colorText = ""
+  gridc = ""
   
   if(theme == "dark" || theme == ""){
     fill_b = "#0d1117"
@@ -34,6 +35,7 @@ plot_trendline <- function(data, team, colour_xg, colour_xga, roll_avg, theme = 
     
     
     colorLine = "white"
+    gridc = "#525252"
     colorText = "white"
   }
   else if(theme == "white"){
@@ -41,6 +43,7 @@ plot_trendline <- function(data, team, colour_xg, colour_xga, roll_avg, theme = 
     colour_b = "black"
     
     colorLine = "black"
+    gridc = "grey"
     colorText = "black"
   }
   else if(theme == "rose"){
@@ -48,6 +51,7 @@ plot_trendline <- function(data, team, colour_xg, colour_xga, roll_avg, theme = 
     colour_b = "#696969"
     
     colorLine = "#322E2E"
+    gridc = "grey"
     colorText = "#322E2E"
   }
   else if(theme == "almond"){
@@ -55,6 +59,7 @@ plot_trendline <- function(data, team, colour_xg, colour_xga, roll_avg, theme = 
     colour_b = "#696969"
     
     colorLine = "#322E2E"
+    gridc = "grey"
     colorText = "#322E2E"
   }
 
@@ -127,9 +132,9 @@ ggplot(data , aes(x = Date)) +
   theme(axis.title.y = element_text(colour = colorText, size = 24, face = "bold")) +
   theme(axis.text.x = element_text(colour = colorText, size = 18),
         axis.text.y = element_text(colour = colorText, size = 18)) +
-  theme(panel.grid.major = element_line(colour = "grey", size = 1, linetype = "dashed"),
+  theme(panel.grid.major = element_line(colour = gridc, size = 1, linetype = "dashed"),
         panel.grid.minor = element_blank()) +
-  theme(panel.grid.major.x = element_line(colour = "grey", size = 1, linetype = "dashed"),
+  theme(panel.grid.major.x = element_line(colour = gridc, size = 1, linetype = "dashed"),
         panel.background = element_blank()) + 
   theme(axis.line = element_line(size = 0.8, colour = colorLine)) + 
     geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Date), fill = colour_xga, alpha = 0.4) +

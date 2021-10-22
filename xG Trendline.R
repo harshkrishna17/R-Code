@@ -7,10 +7,10 @@ library(ggpubr)
 library(ggtext)
 library(worldfootballR)
 
-#//Data extraction and manipulation. This part will cover data 
-#//from two sources, Understat & FBref. Understat data is
-#//generally considered to be less robust than FBref data,
-#//but dates back to 2014, giving a larger timeframe than FBref (StatsBomb)
+#' Data extraction and manipulation. This part will cover data 
+#' from two sources, Understat & FBref. Understat data is
+#' generally considered to be less robust than FBref data,
+#' but dates back to 2014, giving a larger timeframe than FBref via StatsBomb
 
 # Understat
 
@@ -122,9 +122,9 @@ fig <- ggplot(data , aes(x = Round)) +
   geom_line(aes(y = xGSM), colour = "#238443", size = 3) +
   geom_line(aes(y = xGASM), colour = "#cb181d", size = 3) +
   geom_line(aes(y = xGSUM), colour = "#000000", size = 0.1) +  
-  geom_point(aes(y = xGSM), colour = "#238443", size = 3) +
-  geom_point(aes(y = xGASM), colour = "#cb181d", size = 3) +
-  expand_limits(y = c(0.25, 2.25)) + xlim(15, 269) +
+  geom_point(aes(y = xGSM), colour = "#238443", size = 4) +
+  geom_point(aes(y = xGASM), colour = "#cb181d", size = 4) +
+  expand_limits(y = c(0.25, 2.25)) +
   stat_smooth(method = 'lm', aes(y = xGSM), color = "#238443", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
   stat_smooth(method = 'lm', aes(y = xGA), color = "#cb181d", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
   labs(x=NULL, y=NULL, 
@@ -149,10 +149,8 @@ fig <- ggplot(data , aes(x = Round)) +
         panel.grid.minor = element_blank()) +
   scale_x_continuous(breaks = c(0, 50, 100, 150, 200, 250, 300)) +
   theme(panel.grid.major.y = element_blank()) + 
-  theme(axis.line = element_line(size = 0.8, colour = "#ffffff"))
-fig
-
-fig <- fig + geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#cb181d", alpha = 0.4) +
+  theme(axis.line = element_line(size = 0.8, colour = "#ffffff")) +
+  geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#cb181d", alpha = 0.4) +
   geom_ribbon(aes(ymin=xGSUM, ymax=xGSM, x=Round), fill = "#238443", alpha = 0.4) +
   stat_smooth(method = 'lm', aes(y = xGSM), color = "#238443", linetype ="dashed",alpha = 0.5, size = 2,se = FALSE)+
   stat_smooth(method = 'lm', aes(y = xGA), color = "#cb181d", linetype= "dashed", alpha = 0.5, size = 2,se = FALSE) +
@@ -164,4 +162,3 @@ fig <- fig + geom_ribbon(aes(ymin=xGASM, ymax=xGSUM, x=Round), fill = "#cb181d",
   geom_vline(xintercept = 189, linetype = "solid", colour = "#ffffff", size = 2) +
   geom_vline(xintercept = 225, linetype = "solid", colour = "#ffffff", size = 2) +
   geom_vline(xintercept = 263, linetype = "solid", colour = "#ffffff", size = 2)
-fig

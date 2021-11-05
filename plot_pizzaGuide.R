@@ -12,10 +12,11 @@ library(ggshakeR)
 data <- fb_player_scouting_report("https://fbref.com/en/players/f586779e/Tammy-Abraham", pos_versus = "primary")
 
 #' Plotting single player chart. The options for the template are :
-#' forward, midfielder, winger, defender, full back and goalkeeper
+#' forward, midfielder, winger, defender, full back and goalkeeper.
+#' Use the correct season for the season parameter. It is recommended to copy and paste the names from the scouting_period column.  
 
 plot <- plot_pizza(data = data, type = "single", template = "forward", 
-                   colour_poss = "#41ab5d", colour_att = "#2171b5", 
+                   colour_poss = "#41ab5d", colour_att = "#2171b5", season = "Last 365 Days", 
                    colour_def = "#fec44f", theme = "dark")
 plot
 
@@ -33,6 +34,7 @@ data <- rbind(data1, data2)
 
 plot <- plot_pizza(data = data, template = "forward",
                    player_1 = "Tammy Abraham", player_2 = "Dominic Calvert-Lewin",
+                   season_player_1 = "Last 365 Days", season_player_2 = "Last 365 Days",
                    colour_1 = "lightgreen", theme = "black")
 plot
 

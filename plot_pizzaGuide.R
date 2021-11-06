@@ -35,7 +35,7 @@ data <- rbind(data1, data2)
 plot <- plot_pizza(data = data, template = "forward",
                    player_1 = "Tammy Abraham", player_2 = "Dominic Calvert-Lewin",
                    season_player_1 = "Last 365 Days", season_player_2 = "Last 365 Days",
-                   colour_1 = "lightgreen", theme = "black")
+                   colour_compare = "lightgreen", theme = "black")
 plot
 
 #' Saving the plot. Set working directory to the file where you 

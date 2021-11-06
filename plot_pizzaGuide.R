@@ -32,7 +32,7 @@ data <- rbind(data1, data2)
 #' In case of one player having less rows than required, 149 for outfield players,
 #' 37 for goalkeepers, input that specific player as player_1 in the plot code.
 
-plot <- plot_pizza(data = data, template = "forward",
+plot <- plot_pizza(data = data, type = "comparison", template = "forward",
                    player_1 = "Tammy Abraham", player_2 = "Dominic Calvert-Lewin",
                    season_player_1 = "Last 365 Days", season_player_2 = "Last 365 Days",
                    colour_compare = "lightgreen", theme = "black")

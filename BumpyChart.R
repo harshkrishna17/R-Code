@@ -22,6 +22,11 @@ filter(Squad == "Man Utd" | Squad == "Chelsea" |
        Squad == "Liverpool" | Squad == "Man City" |
        Squad == "Spurs" | Squad == "Arsenal") 
 
+df1 <- data1 %>% 
+filter(Matchday == 20)
+
+data1$Squad <- factor(data1$Squad, levels = print(df1$Squad))
+
 data2 <- data %>%
 filter(!Squad == "Man Utd") %>%
 filter(!Squad == "Chelsea") %>%
@@ -29,6 +34,11 @@ filter(!Squad == "Liverpool") %>%
 filter(!Squad == "Man City") %>%
 filter(!Squad == "Arsenal") %>%
 filter(!Squad == "Spurs")
+
+df2 <- data2 %>%
+filter(Matchday == 20)
+
+data2$Squad <- factor(data2$Squad, levels = print(df2$Squad))
 
 # Custom Theme Function
 

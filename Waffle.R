@@ -9,17 +9,21 @@ library(MetBrewer)
 
 # Scraping
 
-data <- get_season_team_stats(country = "ENG", gender = "M", season_end_year = "2022", tier = "1st", stat_type = "goal_shot_creation")
+data <- fb_big5_advanced_season_stats(season_end_year = 2022, stat_type = "gca", team_or_player = "player")
 
 # Data Wrangling 
 
 data1 <- data %>%
-filter(Team_or_Opponent == "team") %>%
-select(Squad, Mins_Per_90, SCA_SCA, PassLive_SCA_Types, PassDead_SCA_Types, Drib_SCA_Types, Sh_SCA_Types, Fld_SCA_Types, Def_SCA_Types)
+filter(Comp == "Premier League") %>%
+filter(Mins_Per_90 >= 9) %>%
+select(Player, Mins_Per_90, SCA_SCA, PassLive_SCA, PassDead_SCA, Drib_SCA, Sh_SCA, Fld_SCA, Def_SCA)
 
-Squad <- data1$Squad
+data1 <- data1[order(as.numeric(data1$SCA_SCA),decreasing = TRUE),]
+data1 <- data1[c(1:20),]
+
+Player <- data1$Player
 Mins <- data1$Mins_Per_90
-data1 <- subset(data1, select = -c(Squad, Mins_Per_90))
+data1 <- subset(data1, select = -c(Player, Mins_Per_90))
 
 for(i in 1:ncol(data1)) {
     data1[, i] <- data1[, i] / Mins
@@ -31,12 +35,12 @@ for(i in 1:ncol(data1)) {
     data1[, i] <- (data1[, i] / SCA) * 100
 }
 
-data1$Squad <- Squad 
+data1$Player <- Player 
 
 data1 <- data1 %>%
-pivot_longer(!Squad, values_to = "SCAp90", names_to = "SCATypes") %>%
+pivot_longer(!Player, values_to = "SCAp90", names_to = "SCATypes") %>%
 filter(!SCATypes == "SCA_SCA") %>%
-count(Squad, SCATypes, wt = SCAp90)
+count(Player, SCATypes, wt = SCAp90)
 
 # Custom theme function
 
@@ -64,10 +68,10 @@ data1 %>%
 ggplot(aes(fill = SCATypes, values = n)) +
 geom_waffle(nrows = 10, size = 0.33, colour = "#151515", flip = TRUE) +
 scale_fill_manual(values = met.brewer(name = "Signac", n = 6, type = "discrete")) +
-facet_wrap(~Squad) +
-labs(title = "Shot-Creating Actions Share",
-     subtitle = "Premier League 2021/22",
-     caption = "Data from FBref\nCreated by @placeholder2004") +
+facet_wrap(~Player) +
+labs(title = "Premier League Shot-Creating Actions Share [2021/22]",
+     subtitle = "Top 20 Players with the most SCA so far",
+     caption = "Minimum 9 90's Played\nData from FBref\nCreated by @placeholder2004") +
 theme_athletic() +
 theme(aspect.ratio = 1,
       strip.background = element_blank(),
@@ -78,4 +82,4 @@ theme(aspect.ratio = 1,
 # Save
 
 setwd("C:/Users/harsh_1mwi2o4/Downloads")
-ggsave("waffle.png", width = 2700, height = 2850, units = "px")
+ggsave("waffle.png", width = 2850, height = 3300, units = "px")

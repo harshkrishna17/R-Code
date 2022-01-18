@@ -57,6 +57,8 @@ theme_custom <- function() {
           legend.text = element_text(colour = "black"))
 }
 
+# Plotting
+
 ggplot(data = data, aes(axis1 = Squad, axis2 = situation, axis3 = isGoal, y = xG)) +
   scale_x_discrete(limits = c("situation", "grouping", "result")) +
   geom_alluvium(aes(fill = Squad), alpha = 0.7) +

@@ -95,7 +95,7 @@ data1 %>%
   ggplot(aes(x = 1, y = index)) +
   geom_text(aes(label = Player, colour = Matches), fontface = "bold") +
   scale_colour_manual(values = c("white", "#F1C40F", "#CB4335")) +
-  geom_rect(aes(xmin = 0, xmax = 2, ymin = 0, ymax = 9), fill = NA, colour = "#525252", linetype = "dashed", size = 1) +
+  geom_rect(aes(xmin = 0, xmax = 2, ymin = 0, ymax = max(index) + 1), fill = NA, colour = "#525252", linetype = "dashed", size = 1) +
   scale_y_reverse() +
   facet_grid(Position~AgeGroups, scales = "free") +
   theme_custom() +

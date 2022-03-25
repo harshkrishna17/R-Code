@@ -4,6 +4,7 @@ library(tidyverse)
 library(worldfootballR)
 library(ggtext)
 library(extrafont)
+library(glue)
 
 # Data 
 
@@ -12,7 +13,7 @@ data <- fb_big5_advanced_season_stats(season_end_year = 2022, stat_type = "stand
 # Data Wrangling 
 
 data <- data %>%
-  filter(Squad == "Arsenal")
+  filter(Squad == "Manchester City")
 
 data1 <- data %>%
   mutate(Ages = 2022 - Born) %>%
@@ -33,13 +34,14 @@ data1 <- data %>%
                                 Pos == "FW,DF" ~ "Forwards",
                               Pos == "GK" |
                                 Pos == "GK,MF" ~ "Goalkeepers")) %>%
-  select(Player, AgeGroups, Position, Matches)
+  select(Player, AgeGroups, Position, Matches, Squad, Comp)
 
 list_df <- split(data1, list(data1$Position, data1$AgeGroups))
 list2env(setNames(list_df,paste0("data", seq(list_df))),envir = .GlobalEnv)
 
 index_col <- function(x) {
   x <- x %>%
+    arrange(desc(Matches)) %>%
     mutate(index = 1:nrow(x))
 }
 
@@ -100,8 +102,8 @@ data1 %>%
   facet_grid(Position~AgeGroups, scales = "free") +
   theme_custom() +
   theme(legend.position = "top") +
-  labs(title = "Arsenal Squad Composition",
-       subtitle = "Premier League 2021/22",
+  labs(title = glue("{data1$Squad} Squad Composition"),
+       subtitle = glue("{data1$Comp} 2021/22"),
        caption = "Data from FBref. Inspired by @Worville. Created by @veryharshtakes")
 
 # Save

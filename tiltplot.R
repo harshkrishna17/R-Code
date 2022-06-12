@@ -1,3 +1,11 @@
+library(StatsBombR)
+
+Comp <- FreeCompetitions() %>%
+  filter(competition_id == 2)
+Matches <- FreeMatches(Comp)
+StatsBombData <- StatsBombFreeEvents(MatchesDF = Matches, Parallel = TRUE)
+data  <- allclean(StatsBombData)
+
 library(tidyverse)
 library(worldfootballR)
 library(grid)
@@ -6,27 +14,29 @@ library(cowplot)
 library(ggtext)
 library(MetBrewer)
 library(ggrepel)
+library(ggshakeR)
 
-data1 <- fb_big5_advanced_season_stats(season_end_year = 2022, 
-                                      stat_type = "possession", 
-                                      team_or_player = "player")
-data2 <- fb_big5_advanced_season_stats(season_end_year = 2022, 
-                                       stat_type = "passing", 
-                                       team_or_player = "player") %>%
-  select(Prog)
-
-data <- cbind(data1, data2)
 data <- data %>%
-  filter(Mins_Per_90 >= 30) %>%
-  mutate(ProgPassesp90 = Prog/Mins_Per_90,
-         ProgCarriesp90 = Prog_Carries/Mins_Per_90)
+  rename("x" = "location.x",
+         "y" = "location.y",
+         "finalX" = "pass.end_location.x",
+         "finalY" = "pass.end_location.y")
 
-df1 <- data %>%
-  filter(ProgCarriesp90 >= 10)
-df2 <- data %>%
-  filter(ProgPassesp90 >= 7.5)
-df <- rbind(df1, df2)
-df <- df[-1, ]
+data <- data %>%
+  ggshakeR::calculate_threat(dataType = "statsbomb")
+data <- data %>%
+  mutate(xT = xTEnd - xTStart)
+data$xT[is.na(data$xT)] <- 0
+
+data1 <- data %>%
+  group_by(player.name) %>%
+  summarise(xTPass = sum(xT))
+data2 <- data %>%
+  group_by(pass.recipient.name) %>%
+  summarise(xTRec = sum(xT))
+
+data <- cbind(data1, data2) %>%
+  tidyr::drop_na(player.name, pass.recipient.name)
 
 theme_athletic <- function() {
   theme_minimal() +
@@ -62,7 +72,7 @@ g <- g +
 
 grid.newpage()
 plot <- print(g, vp = viewport(width = unit(0.8, "npc"),
-                       height = unit(0.8, "npc"), angle = 45))
+                               height = unit(0.8, "npc"), angle = 45))
 vp <- viewport(x = 0.87, y = 0.9, width = 0, height = 0)
 pushViewport(vp)
 grid.draw(leg)

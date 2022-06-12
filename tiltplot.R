@@ -72,13 +72,13 @@ theme_athletic <- function() {
 
 g <- ggplot(data, aes(x = EPVPass, y = EPVRec)) +
   geom_point(aes(fill = colour), size = 2.5, shape = 21, colour = "black") +
-  geom_segment(aes(x = 0.5, y = 0.5, xend = 1.1, yend = 0.5), colour = "white", size = 0.5, linetype = "dashed") +
-  geom_segment(aes(x = 0.5, y = 0.5, xend = 0.5, yend = 1.1), colour = "white", size = 0.5, linetype = "dashed") +
-  geom_text_repel(data = df, aes(x = EPVPass, y = EPVRec, label = player.name, angle = -45), colour = "white", size = 3.5) +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 1.1, yend = 0.5), colour = "white", size = 0.5, linetype = "longdash") +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 0.5, yend = 1.1), colour = "white", size = 0.5, linetype = "longdash") +
+  geom_text_repel(data = df, aes(x = EPVPass, y = EPVRec, label = player.name, angle = -45), fontface = "bold", colour = "white", size = 3.5) +
   scale_fill_manual(values = met.brewer(name = "Homer2", n = 4)) +
   theme_athletic() +
-  labs(x = "EPV Passed per 100 passes Ranking",
-       y = "EPV Received per 100 passes Ranking")
+  labs(x = "(-) EPV Passed Ranking (+)",
+       y = "(-) EPV Received Ranking (+)")
 
 leg <- as.grob( ~ plot(get_legend(g + theme_athletic())))
 
@@ -88,7 +88,7 @@ g <- g +
 grid.newpage()
 plot <- print(g, vp = viewport(width = unit(0.8, "npc"),
                                height = unit(0.8, "npc"), angle = 45))
-vp <- viewport(x = 0.82, y = 0.95, width = 0, height = 0)
+vp <- viewport(x = 0.82, y = 0.97, width = 0, height = 0)
 pushViewport(vp)
 grid.draw(leg)
 

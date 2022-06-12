@@ -1,4 +1,11 @@
+library(tidyverse)
+library(grid)
+library(ggplotify)
+library(cowplot)
+library(ggtext)
+library(ggrepel)
 library(StatsBombR)
+library(ggshakeR)
 
 Comp <- FreeCompetitions() %>%
   filter(competition_id == 2)
@@ -6,37 +13,42 @@ Matches <- FreeMatches(Comp)
 StatsBombData <- StatsBombFreeEvents(MatchesDF = Matches, Parallel = TRUE)
 data  <- allclean(StatsBombData)
 
-library(tidyverse)
-library(worldfootballR)
-library(grid)
-library(ggplotify)
-library(cowplot)
-library(ggtext)
-library(MetBrewer)
-library(ggrepel)
-library(ggshakeR)
-
-data <- data %>%
+df <- data %>%
   rename("x" = "location.x",
          "y" = "location.y",
          "finalX" = "pass.end_location.x",
-         "finalY" = "pass.end_location.y")
+         "finalY" = "pass.end_location.y") %>%
+  ggshakeR::calculate_epv(dataType = "statsbomb") %>%
+  mutate(EPV = EPVEnd - EPVStart)
+df$EPV[is.na(df$EPV)] <- 0
 
-data <- data %>%
-  ggshakeR::calculate_threat(dataType = "statsbomb")
-data <- data %>%
-  mutate(xT = xTEnd - xTStart)
-data$xT[is.na(data$xT)] <- 0
-
-data1 <- data %>%
+data1 <- df %>%
   group_by(player.name) %>%
-  summarise(xTPass = sum(xT))
-data2 <- data %>%
+  summarise(EPVPass = sum(EPV), Passes = n()) %>%
+  mutate(Passes = Passes/100,
+         EPVPass = EPVPass/Passes,
+         EPVPass = percent_rank(EPVPass))
+
+data2 <- df %>%
   group_by(pass.recipient.name) %>%
-  summarise(xTRec = sum(xT))
+  summarise(EPVRec = sum(EPV), Passes = n()) %>%
+  mutate(Passes = Passes/100,
+         EPVRec = EPVRec/Passes,
+         EPVRec = percent_rank(EPVRec))
 
 data <- cbind(data1, data2) %>%
-  tidyr::drop_na(player.name, pass.recipient.name)
+  tidyr::drop_na(player.name, pass.recipient.name) %>%
+  select(player.name, EPVPass, EPVRec)
+
+data <- data %>%
+  mutate(colour = case_when(EPVPass <= 0.50 & EPVRec <= 0.50 ~ "Not Very Good",
+                            EPVPass <= 0.50 & EPVRec >= 0.50 ~ "High Pass EPV/100",
+                            EPVPass >= 0.50 & EPVRec <= 0.50 ~ "High Receiving EPV/100",
+                            EPVPass >= 0.50 & EPVRec >= 0.50 ~ "High Pass & Receiving EPV/100"))
+
+df <- data %>%
+  filter(EPVPass >= 0.9,
+         EPVRec >= 0.9)
 
 theme_athletic <- function() {
   theme_minimal() +
@@ -52,18 +64,21 @@ theme_athletic <- function() {
     theme(panel.grid.major = element_line(colour = "#525252", size = 0.2, linetype = "dashed"),
           panel.grid.minor = element_line(colour = "#525252", size = 0.2, linetype = "dashed")) +
     theme(panel.grid.major.x = element_line(colour = "#525252", size = 0.2, linetype = "dashed")) +
-    theme(legend.title = element_text(colour = "white"),
+    theme(legend.title = element_text(colour = "#151515"),
           legend.text = element_text(colour = "white")) +
     theme(aspect.ratio = 1)
 }
 
-g <- ggplot(data, aes(x = ProgPassesp90, y = ProgCarriesp90, colour = Comp)) +
-  geom_point(size = 2) +
-  geom_text_repel(data = df, aes(x = ProgPassesp90, y = ProgCarriesp90, label = Player, angle = -45), colour = "white", size = 3) +
-  scale_colour_manual(values = met.brewer(name = "Signac", n = 5)) +
+g <- ggplot(data, aes(x = EPVPass, y = EPVRec, colour = colour)) +
+  geom_point(size = 3) +
+  theme(aspect.ratio = 1) +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 1.1, yend = 0.5), colour = "white", size = 1, linetype = "dashed") +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 0.5, yend = 1.1), colour = "white", size = 1, linetype = "dashed") +
+  geom_text_repel(data = df, aes(x = EPVPass, y = EPVRec, label = player.name, angle = -45), colour = "white", size = 3.5) +
+  scale_colour_manual(values = met.brewer(name = "Homer2", n = 4)) +
   theme_athletic() +
-  labs(x = "Progressive Passes / 90",
-       y = "Progressive Carries / 90")
+  labs(x = "Rank of EPV Passed per 100 passes",
+       y = "Rank of EPV Received per 100 passes")
 
 leg <- as.grob( ~ plot(get_legend(g + theme_athletic())))
 
@@ -81,9 +96,9 @@ plot <- grid.grab()
 plot <- as.ggplot(plot)
 
 plot +
-  labs(title = "Progressive Passes Vs. Carries",
-       subtitle = "Big 5 Leagues [2021/22]",
-       caption = "More than 30 90's played\nCreated by @veryharshtakes") +
+  labs(title = "EPV Passed Vs. Received",
+       subtitle = "Premier League [2003/04]",
+       caption = "Data via StatsBomb\nCreated by @veryharshtakes") +
   theme(plot.title = element_text(colour = "white", size = 15, face = "bold"),
         plot.subtitle = element_text(colour = "white", size = 10),
         plot.caption = element_text(colour = "white", size = 8, hjust = 1))

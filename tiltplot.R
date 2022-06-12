@@ -6,6 +6,7 @@ library(ggtext)
 library(ggrepel)
 library(StatsBombR)
 library(ggshakeR)
+library(MetBrewer)
 
 Comp <- FreeCompetitions() %>%
   filter(competition_id == 2)
@@ -42,9 +43,9 @@ data <- cbind(data1, data2) %>%
 
 data <- data %>%
   mutate(colour = case_when(EPVPass <= 0.50 & EPVRec <= 0.50 ~ "Not Very Good",
-                            EPVPass <= 0.50 & EPVRec >= 0.50 ~ "High Pass EPV/100",
-                            EPVPass >= 0.50 & EPVRec <= 0.50 ~ "High Receiving EPV/100",
-                            EPVPass >= 0.50 & EPVRec >= 0.50 ~ "High Pass & Receiving EPV/100"))
+                            EPVPass <= 0.50 & EPVRec >= 0.50 ~ "High Receiving EPV/100",
+                            EPVPass >= 0.50 & EPVRec <= 0.50 ~ "High Pass EPV/100",
+                            EPVPass >= 0.50 & EPVRec >= 0.50 ~ "High Pass & Rec EPV/100"))
 
 df <- data %>%
   filter(EPVPass >= 0.9,
@@ -64,21 +65,20 @@ theme_athletic <- function() {
     theme(panel.grid.major = element_line(colour = "#525252", size = 0.2, linetype = "dashed"),
           panel.grid.minor = element_line(colour = "#525252", size = 0.2, linetype = "dashed")) +
     theme(panel.grid.major.x = element_line(colour = "#525252", size = 0.2, linetype = "dashed")) +
-    theme(legend.title = element_text(colour = "#151515"),
+    theme(legend.title = element_blank(),
           legend.text = element_text(colour = "white")) +
     theme(aspect.ratio = 1)
 }
 
-g <- ggplot(data, aes(x = EPVPass, y = EPVRec, colour = colour)) +
-  geom_point(size = 3) +
-  theme(aspect.ratio = 1) +
-  geom_segment(aes(x = 0.5, y = 0.5, xend = 1.1, yend = 0.5), colour = "white", size = 1, linetype = "dashed") +
-  geom_segment(aes(x = 0.5, y = 0.5, xend = 0.5, yend = 1.1), colour = "white", size = 1, linetype = "dashed") +
+g <- ggplot(data, aes(x = EPVPass, y = EPVRec)) +
+  geom_point(aes(fill = colour), size = 2.5, shape = 21, colour = "black") +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 1.1, yend = 0.5), colour = "white", size = 0.5, linetype = "dashed") +
+  geom_segment(aes(x = 0.5, y = 0.5, xend = 0.5, yend = 1.1), colour = "white", size = 0.5, linetype = "dashed") +
   geom_text_repel(data = df, aes(x = EPVPass, y = EPVRec, label = player.name, angle = -45), colour = "white", size = 3.5) +
-  scale_colour_manual(values = met.brewer(name = "Homer2", n = 4)) +
+  scale_fill_manual(values = met.brewer(name = "Homer2", n = 4)) +
   theme_athletic() +
-  labs(x = "Rank of EPV Passed per 100 passes",
-       y = "Rank of EPV Received per 100 passes")
+  labs(x = "EPV Passed per 100 passes Ranking",
+       y = "EPV Received per 100 passes Ranking")
 
 leg <- as.grob( ~ plot(get_legend(g + theme_athletic())))
 
@@ -88,7 +88,7 @@ g <- g +
 grid.newpage()
 plot <- print(g, vp = viewport(width = unit(0.8, "npc"),
                                height = unit(0.8, "npc"), angle = 45))
-vp <- viewport(x = 0.87, y = 0.9, width = 0, height = 0)
+vp <- viewport(x = 0.82, y = 0.95, width = 0, height = 0)
 pushViewport(vp)
 grid.draw(leg)
 
